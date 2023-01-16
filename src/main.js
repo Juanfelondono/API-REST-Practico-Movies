@@ -52,8 +52,8 @@ async function getCategoriesPreview() {
         categoriesPreviewContainer.appendChild(categoryContainer); // agrego el div al artcule
     });   
 }
-getTrendingMoviesPreview();     
-getCategoriesPreview();
+// getTrendingMoviesPreview();     
+// getCategoriesPreview(); ya solo cargar desde el navigator cuando estoy en el home
 
 
 // consulta usando fetch
