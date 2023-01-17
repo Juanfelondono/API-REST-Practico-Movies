@@ -144,7 +144,7 @@ button {
 
 .header-arrow {
   font-weight: var(--font-weight-text2);
-  font-size: 3.6rempx;
+  font-size: 3.6rem;
   margin-bottom: 16px;
   cursor: pointer;
   display: inline-block;
@@ -223,6 +223,7 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1rem;
 }
 
 .category-title::before {
