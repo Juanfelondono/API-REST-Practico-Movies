@@ -1,3 +1,4 @@
+// hagao que si den clich cambie el hash a donde lo deseo 
 searchBtn.addEventListener('click', () =>  {
     location.hash ="#search="
 });
@@ -30,6 +31,8 @@ function navigator () {
     } else {
         homePage();
     } 
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0; // Asi muestra la parte uperior de la pagina siempre 
 }
 
 function homePage() {
@@ -69,6 +72,13 @@ function categoriesPage() {
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
 
+    const [_, categoryData] = location.hash.split('='); // ['#category, 'id-nanme']// le digo que cree un array separandolo por cada = que encuentre ejemplo #category=12-Adventure
+
+    const [categoryId, categoryName] = categoryData.split('-'); //  vuelvo a separalo para obtener el id
+    headerTitleCategory.innerHTML = categoryName; // con esto garantizo limpiar para que cada vez que entre no se vuelva a cargar todo de la api y se duplque la informacion  
+    
+
+    getMoviesByCategory(categoryId);
 }
 
 function trendsPage() {

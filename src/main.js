@@ -10,12 +10,12 @@ const api = axios.create ({
     },
 });
 
-async function getTrendingMoviesPreview() {
-    const {data} = await api ('trending/movie/day');
+//Utils
 
-    const movies = data.results;
+function createMovies(movies,container) { // creoe sta funcion para crear de una amnera ma simple,simpre recibo mubies y el contenedor donde desee agregarlo
+    container.innerHTML = '';
+
     movies.forEach(movie => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
-        const trendingPreviewMovieContainer = document.querySelector('#trendingPreview .trendingPreview-movieList') // esto lo realizo para poder seleccionar al articule donde esta guardado el div 
         const movieContainer = document.createElement('div'); //creo un div para almacenar
         movieContainer.classList.add('movie-container'); //hago que le agregue la clase al div
 
@@ -26,17 +26,17 @@ async function getTrendingMoviesPreview() {
 
         // aca los empiezo a adicionar
         movieContainer.appendChild(movieImg);  
-        trendingPreviewMovieContainer.appendChild(movieContainer); 
+        container.appendChild(movieContainer); 
     });   
-};
+}
 
-async function getCategoriesPreview() {
-    const { data } = await api ('genre/movie/list');
+function createCategories(categories,container) { 
     
-    const categories = data.genres;
+    container.innerHTML = ""; // con esto garantizo limpiar para que cada vez que entre no se vuelva a cargar todo de la api y se duplque la informacion
+
     categories.forEach(category => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
         
-        const categoriesPreviewContainer = document.querySelector('#categoriesPreview .categoriesPreview-list') // esto lo realizo para poder seleccionar al articule donde esta guardado el div 
+        const categoriesPreviewList = document.querySelector('#categoriesPreview .categoriesPreview-list') // esto lo realizo para poder seleccionar al articule donde esta guardado el div 
         
         const categoryContainer = document.createElement('div'); //creo un div para almacenar
         categoryContainer.classList.add('category-container'); //hago que le agregue la clase al div
@@ -44,16 +44,117 @@ async function getCategoriesPreview() {
         const categoryTitle = document.createElement('h3'); // creo el titulo h3
         categoryTitle.classList.add('category-title'); // creo la clase de al titulo
         categoryTitle.setAttribute('id', 'id'+ category.id); // Primero se pone el atributo que deseo y luego el valor
+        categoryTitle.addEventListener('click', () => { // creo una funcion para cuando le den click se vaya a category al genero que deseo esto me manda al navegation
+            location.hash = `#category=${category.id}-${category.name}`;
+        });
         const categoryTitleText = document.createTextNode(category.name);
 
         // aca los empiezo a adicionar
         categoryTitle.appendChild(categoryTitleText); //agrego al h3 el titulo que deseo
         categoryContainer.appendChild(categoryTitle); // agrego el h3 al div
-        categoriesPreviewContainer.appendChild(categoryContainer); // agrego el div al artcule
-    });   
+        container.appendChild(categoryContainer); // agrego el div al artcule
+    });      
 }
-// getTrendingMoviesPreview();     
-// getCategoriesPreview(); ya solo cargar desde el navigator cuando estoy en el home
+
+// Llamados a la API
+
+async function getTrendingMoviesPreview() {
+    const {data} = await api ('trending/movie/day');
+
+    //trendingPreviewMovieList.innerHTML = ""; // con esto garantizo limpiar para que cada vez que entre no se vuelva a cargar todo de la api y se duplque la informacion
+    const movies = data.results;
+    createMovies(movies,trendingPreviewMovieList); // ya solo llamo a la funcion y limpio el codido de abajo 
+
+    // movies.forEach(movie => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
+    //     const trendingPreviewMovieList = document.querySelector('#trendingPreview .trendingPreview-movieList') // esto lo realizo para poder seleccionar al articule donde esta guardado el div 
+    //     const movieContainer = document.createElement('div'); //creo un div para almacenar
+    //     movieContainer.classList.add('movie-container'); //hago que le agregue la clase al div
+
+    //     const movieImg = document.createElement('img'); // creo la imagen 
+    //     movieImg.classList.add('movie-img'); // creo la clase de la imagen
+    //     movieImg.setAttribute('alt', movie.title) // Primero se pone el atributo que deseo y luego el valor
+    //     movieImg.setAttribute('src', 'https://image.tmdb.org/t/p/w300/'+ movie.poster_path) //creo el srcc y pongo la direccion de src para el poster
+
+    //     // aca los empiezo a adicionar
+    //     movieContainer.appendChild(movieImg);  
+    //     trendingPreviewMovieList.appendChild(movieContainer); 
+    // });   
+};
+
+async function getCategoriesPreview() {
+    const { data } = await api ('genre/movie/list');
+    
+   // categoriesPreviewList.innerHTML = ""; // con esto garantizo limpiar para que cada vez que entre no se vuelva a cargar todo de la api y se duplque la informacion
+
+    const categories = data.genres;
+    createCategories(categories, categoriesPreviewList); // cone sto remplazo el codigo de abajo 
+
+    // categories.forEach(category => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
+        
+    //     const categoriesPreviewList = document.querySelector('#categoriesPreview .categoriesPreview-list') // esto lo realizo para poder seleccionar al articule donde esta guardado el div 
+        
+    //     const categoryContainer = document.createElement('div'); //creo un div para almacenar
+    //     categoryContainer.classList.add('category-container'); //hago que le agregue la clase al div
+
+    //     const categoryTitle = document.createElement('h3'); // creo el titulo h3
+    //     categoryTitle.classList.add('category-title'); // creo la clase de al titulo
+    //     categoryTitle.setAttribute('id', 'id'+ category.id); // Primero se pone el atributo que deseo y luego el valor
+    //     categoryTitle.addEventListener('click', () => { // creo una funcion para cuando le den click se vaya a category al genero que deseo esto me manda al navegation
+    //         location.hash = `#category=${category.id}-${category.name}`;
+    //     });
+    //     const categoryTitleText = document.createTextNode(category.name);
+
+    //     // aca los empiezo a adicionar
+    //     categoryTitle.appendChild(categoryTitleText); //agrego al h3 el titulo que deseo
+    //     categoryContainer.appendChild(categoryTitle); // agrego el h3 al div
+    //     categoriesPreviewList.appendChild(categoryContainer); // agrego el div al artcule
+    // });   
+}
+
+async function getMoviesByCategory(id) {
+    const {data} = await api ('/discover/movie', {
+        params: {
+            with_genres: id,
+        },
+    });
+
+    //genericSection.innerHTML = ""; // con esto garantizo limpiar para que cada vez que entre no se vuelva a cargar todo de la api y se duplque la informacion
+    
+    const movies = data.results;
+    createMovies(movies,genericSection); // cone sto remplazo el codigo de abajo
+
+    // movies.forEach(movie => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
+        
+
+    //     const movieContainer = document.createElement('div'); //creo un div para almacenar
+    //     movieContainer.classList.add('movie-container'); //hago que le agregue la clase al div
+
+    //     const movieImg = document.createElement('img'); // creo la imagen 
+    //     movieImg.classList.add('movie-img'); // creo la clase de la imagen
+    //     movieImg.setAttribute('alt', movie.title) // Primero se pone el atributo que deseo y luego el valor
+    //     movieImg.setAttribute('src', 'https://image.tmdb.org/t/p/w300/'+ movie.poster_path) //creo el srcc y pongo la direccion de src para el poster
+
+    //     // aca los empiezo a adicionar
+    //     movieContainer.appendChild(movieImg);  
+    //     genericSection.appendChild(movieContainer); 
+    // });   
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // consulta usando fetch
