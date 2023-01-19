@@ -1,6 +1,6 @@
 // hagao que si den clich cambie el hash a donde lo deseo 
 searchBtn.addEventListener('click', () =>  {
-    location.hash ="#search="
+    location.hash ="#search=" + searchFormInput.value; // le que escribieron el buscado y lo concateno
 });
 
 trendingPreviewBtn.addEventListener('click', () =>{
@@ -8,7 +8,10 @@ trendingPreviewBtn.addEventListener('click', () =>{
 })
 
 arrowBtn.addEventListener('click', () =>{
-    location.hash = "#home="
+    history.back(); // asi hago que me devulva al al ultima url buscada
+    const [_, query] = location.hash.split('=');  
+    searchFormInput.value = query;
+    // location.hash = "#home="
 })
 
 window.addEventListener('DOMContentLoaded', navigator, false);
@@ -37,6 +40,7 @@ function navigator () {
 
 function homePage() {
     console.log ('Home!!')
+    searchFormInput.value =  "";
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
     arrowBtn.classList.add('inactive');
@@ -97,6 +101,10 @@ function trendsPage() {
 
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+
+    getTrendingMovies();
+
+    headerTitleCategory.innerHTML = "Tendencias" //asi cambio el titulo de la pag 
 }
 
 function searchPage() {
@@ -104,8 +112,9 @@ function searchPage() {
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
     arrowBtn.classList.remove('inactive');
-    headerTitle.classList.add('inactive')
-    headerTitleCategory.classList.remove('inactive');
+    arrowBtn.classList.remove('header-arrow--white');
+    headerTitle.classList.add('inactive');
+    headerTitleCategory.classList.add('inactive');
     searchFormInput.classList.remove('inactive'); 
     searchBtn.classList.remove('inactive');
     
@@ -114,6 +123,11 @@ function searchPage() {
 
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
+
+    // ['#search, 'busqueda']// le digo que cree un array separandolo por cada = que encuentre ejemplo #search=busqueda, asi saco el valor 
+    const [_, query] = location.hash.split('='); 
+    getMoviesBySearch(query);
+    
 }
 
 function movieDetailsPage() {
