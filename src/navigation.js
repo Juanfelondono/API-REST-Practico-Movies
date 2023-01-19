@@ -91,6 +91,7 @@ function trendsPage() {
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
     arrowBtn.classList.remove('inactive');
+    arrowBtn.classList.remove('header-arrow--white');
     headerTitle.classList.add('inactive')
     headerTitleCategory.classList.remove('inactive');
     searchFormInput.classList.add('inactive'); 
@@ -147,6 +148,9 @@ function movieDetailsPage() {
 
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
+
+    const [_, movieId] = location.hash.split('='); // asi saco al id
+    getMovieById(movieId);
 }
 
 

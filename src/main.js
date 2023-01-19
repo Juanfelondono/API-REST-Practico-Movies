@@ -18,7 +18,10 @@ function createMovies(movies,container) { // creoe sta funcion para crear de una
     movies.forEach(movie => { // asi hago que cree esto por cada pelicula que recorre, revio el html para saber que debo crear
         const movieContainer = document.createElement('div'); //creo un div para almacenar
         movieContainer.classList.add('movie-container'); //hago que le agregue la clase al div
-
+        
+        movieContainer.addEventListener('click',() => { // cada vez que le de click a una pelicula tendre el id 
+            location.hash= '#movie=' + movie.id
+        })
         const movieImg = document.createElement('img'); // creo la imagen 
         movieImg.classList.add('movie-img'); // creo la clase de la imagen
         movieImg.setAttribute('alt', movie.title) // Primero se pone el atributo que deseo y luego el valor
@@ -159,7 +162,20 @@ async function getTrendingMovies() {
       
 };
 
+async function getMovieById(movieId) {
+    const { data: movie} = await api ('/movie/' + movieId); // ya solo es un objeto no un array 
+    
+    const movieImgUrl = 'https://image.tmdb.org/t/p/w500/' + movie.poster_path;
+    headerSection.style.background=  `linear-gradient(180deg, rgba(0, 0, 0, 0.35) 19.27%, rgba(0, 0, 0, 0) 29.17%), url(${movieImgUrl})` //asi agrego la imagen de la pelicula y el sombreado para que se vea la flecha
+    
+    movieDetailTitle.textContent = movie.original_title; // asi le asigno el valor del titulo a cada pelicula 
+    movieDetailDescription.textContent = movie.overview;
+    movieDetailScore.textContent = movie.vote_average;
 
+    createCategories(movie.genres, movieDetailCategoriesList); // asi hago que se cree la lsita de categorias de cada pelicula
+
+
+}
 
 
 
