@@ -174,11 +174,15 @@ async function getMovieById(movieId) {
 
     createCategories(movie.genres, movieDetailCategoriesList); // asi hago que se cree la lsita de categorias de cada pelicula
 
-
+    getRelatedMoviesById (movieId)
 }
 
+async function getRelatedMoviesById (movieId) {
+    const { data } = await api ('/movie/' + movieId + '/recommendations'); // 
+    const relatesMovies = data.results;
 
-
+    createMovies(relatesMovies, relatedMoviesContainer); // uso la funcion para crear las peliculas 
+}
 
 
 

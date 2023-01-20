@@ -65,6 +65,7 @@ function categoriesPage() {
     headerSection.classList.remove('header-container--long');
     headerSection.style.background = '';
     arrowBtn.classList.remove('inactive');
+    arrowBtn.classList.remove('header-arrow--white');
     headerTitle.classList.add('inactive')
     headerTitleCategory.classList.remove('inactive');
     searchFormInput.classList.add('inactive'); 
