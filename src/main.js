@@ -6,7 +6,7 @@ const api = axios.create ({
         'Content-Type': 'application/json;charset=utf-8'
     },
     params: {
-        'api_key': API_KEY,
+            'api_key': API_KEY,
     },
 });
 
@@ -151,7 +151,6 @@ async function getMoviesBySearch(query) {
     });
     const movies = data.results;
     createMovies(movies,genericSection);
-
 };
 
 async function getTrendingMovies() {
@@ -185,6 +184,16 @@ async function getRelatedMoviesById (movieId) {
 }
 
 
+async function ensayo(query) { 
+    const {data, status } = await api ('/search/movie', {
+        params: {
+            query,
+        }, 
+    });
+    
+    const movies = data.results[0].original_title;
+    console.log(status);
+};
 
 
 
