@@ -1,3 +1,6 @@
+let page = 1;
+let infiniteScroll;
+let maxPage;
 // hagao que si den clich cambie el hash a donde lo deseo 
 searchBtn.addEventListener('click', () =>  {
     location.hash ="#search=" + searchFormInput.value; // le que escribieron el buscado y lo concateno
@@ -17,11 +20,21 @@ arrowBtn.addEventListener('click', () =>{
 window.addEventListener('DOMContentLoaded', navigator, false);
 window.addEventListener('hashchange', navigator, false);
 
+// para elimanr el boton hago que el navegador escuche cada vez que se haga escroll y llame a la funcion paginated y asi ella verifica si esta en el final de la pantalla
+window.addEventListener('scroll', infiniteScroll, false); // esa es la funcion que llamaremos cada vez que se el scroll llegue al final
+
 
 
 // con esta creo que la navegacion sepa en que parte estoy gracias al de hash 
 function navigator () {
     console.log({location});
+
+    if (infiniteScroll) {  // para elminar el que se empiece a escuchar el scroll y que si tiene algin valor qu elo borre
+        window.removeEventListener('scroll', infiniteScroll, {
+            passive: false
+        });
+        infiniteScroll = undefined;
+    }
 
     if ( location.hash.startsWith('#trends')) {
         trendsPage();
@@ -36,6 +49,13 @@ function navigator () {
     } 
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0; // Asi muestra la parte uperior de la pagina siempre 
+
+    if(infiniteScroll){
+        window.addEventListener('scroll', infiniteScroll, {
+            passive: false
+        }) // aca estamos diciendo que en algina d elas paginas se le asigno un valor a infiniteScroll entonces escuche el evento de scroll y el hara el llaamdo de esa funcion 
+    }
+
 }
 
 function homePage() {
@@ -50,6 +70,7 @@ function homePage() {
     searchBtn.classList.remove('inactive')
     
     trendingPreviwSection.classList.remove('inactive');
+    likedMoviesSection.classList.remove('inactive');
     categoriesPreviewSection.classList.remove('inactive');
 
     genericSection.classList.add('inactive');
@@ -57,6 +78,7 @@ function homePage() {
 
     getTrendingMoviesPreview();   // las hago cargar solo cuando hash esta en el home  
     getCategoriesPreview();
+    getLikedMovies();
 
 }
 function categoriesPage() {
@@ -72,6 +94,7 @@ function categoriesPage() {
     searchBtn.classList.add('inactive');
     
     trendingPreviwSection.classList.add('inactive');
+    likedMoviesSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
 
     genericSection.classList.remove('inactive');
@@ -84,6 +107,7 @@ function categoriesPage() {
     
 
     getMoviesByCategory(categoryId);
+    infiniteScroll = getPaginatedMoviesByCategory (categoryId);
 }
 
 function trendsPage() {
@@ -99,14 +123,16 @@ function trendsPage() {
     searchBtn.classList.add('inactive');
     
     trendingPreviwSection.classList.add('inactive');
+    likedMoviesSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
 
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
 
+    headerTitleCategory.innerHTML = "Tendencias" //asi cambio el titulo de la pag 
     getTrendingMovies();
 
-    headerTitleCategory.innerHTML = "Tendencias" //asi cambio el titulo de la pag 
+    infiniteScroll = getPaginatedTrendingMovies;
 }
 
 function searchPage() {
@@ -121,6 +147,7 @@ function searchPage() {
     searchBtn.classList.remove('inactive');
     
     trendingPreviwSection.classList.add('inactive');
+    likedMoviesSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
 
     genericSection.classList.remove('inactive');
@@ -129,6 +156,9 @@ function searchPage() {
     // ['#search, 'busqueda']// le digo que cree un array separandolo por cada = que encuentre ejemplo #search=busqueda, asi saco el valor 
     const [_, query] = location.hash.split('='); 
     getMoviesBySearch(query);
+
+    // como en esta si hay que envia un argunto creo un funcion qu eme llame a un funcion asincrona que queda esccuchando y se ejecuta cuando se activa el scroll
+    infiniteScroll = getPaginatedMoviesBySearch (query);
     
 }
 
@@ -145,6 +175,7 @@ function movieDetailsPage() {
     searchBtn.classList.add('inactive');
     
     trendingPreviwSection.classList.add('inactive');
+    likedMoviesSection.classList.add('inactive');
     categoriesPreviewSection.classList.add('inactive');
 
     genericSection.classList.add('inactive');
